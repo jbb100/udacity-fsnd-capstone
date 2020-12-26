@@ -3,21 +3,23 @@ from sqlalchemy import Column, String, Integer, Date
 from flask_sqlalchemy import SQLAlchemy
 import json
 
-database_filename = "database.db"
 project_dir = os.path.dirname(os.path.abspath(__file__))
-database_path = "sqlite:///{}".format(os.path.join(project_dir, database_filename))
-
 db = SQLAlchemy()
 
 '''
 setup_db(app)
     binds a flask application and a SQLAlchemy service
 '''
-def setup_db(app):
+
+
+def setup_db(app, database_filename="database.db"):
+    database_path = "sqlite:///{}".format(
+    os.path.join(project_dir, database_filename))
     app.config["SQLALCHEMY_DATABASE_URI"] = database_path
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
     db.init_app(app)
+
 
 '''
 db_drop_and_create_all()
@@ -25,26 +27,32 @@ db_drop_and_create_all()
     can be used to initialize a clean database
     !!NOTE you can change the database_filename variable to have multiple verisons of a database
 '''
+
+
 def db_drop_and_create_all():
     db.drop_all()
     db.create_all()
+
 
 '''
 Movies
 a persistent movie entity, extends the base SQLAlchemy Model
 '''
+
+
 class Movie(db.Model):
     # Autoincrementing, unique primary key
     id = Column(Integer().with_variant(Integer, "sqlite"), primary_key=True)
     # String Title
     title = Column(String(100), nullable=False)
     # Date Release Date
-    release_date =  Column(Date, nullable=False)
+    release_date = Column(Date, nullable=False)
 
     '''
     format()
         json representation of the Movies model
     '''
+
     def format(self):
         return {
             'id': self.id,
@@ -61,6 +69,7 @@ class Movie(db.Model):
             movie = Movie(title=req_title, release_date=req_release_date)
             movie.insert()
     '''
+
     def insert(self):
         db.session.add(self)
         db.session.commit()
@@ -73,6 +82,7 @@ class Movie(db.Model):
             movie = Movie(title=req_title, release_date=req_release_date)
             drink.delete()
     '''
+
     def delete(self):
         db.session.delete(self)
         db.session.commit()
@@ -86,6 +96,7 @@ class Movie(db.Model):
             movie.title = 'Titanic'
             movie.update()
     '''
+
     def update(self):
         db.session.commit()
 
@@ -93,11 +104,12 @@ class Movie(db.Model):
         return json.dumps(self.short())
 
 
-
 '''
 Actors
 a persistent actor entity, extends the base SQLAlchemy Model
 '''
+
+
 class Actor(db.Model):
     # Autoincrementing, unique primary key
     id = Column(Integer().with_variant(Integer, "sqlite"), primary_key=True)
@@ -112,6 +124,7 @@ class Actor(db.Model):
     format()
         json representation of the Actor model
     '''
+
     def format(self):
         return {
             'id': self.id,
@@ -129,6 +142,7 @@ class Actor(db.Model):
             actor = Actor(name=req_name, age=req_age, gender=req_gender)
             actor.insert()
     '''
+
     def insert(self):
         db.session.add(self)
         db.session.commit()
@@ -141,6 +155,7 @@ class Actor(db.Model):
             actor = Actor(name=req_name, age=req_age, gender=req_gender)
             actor.delete()
     '''
+
     def delete(self):
         db.session.delete(self)
         db.session.commit()
@@ -154,6 +169,7 @@ class Actor(db.Model):
             actor.title = 'Jung Woo-Sung'
             actor.update()
     '''
+
     def update(self):
         db.session.commit()
 
