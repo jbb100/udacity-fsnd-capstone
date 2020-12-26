@@ -3,8 +3,8 @@ from flask import Flask, request, jsonify, abort
 from sqlalchemy import exc
 import json
 from flask_cors import CORS, cross_origin
-from .database.models import db_drop_and_create_all, setup_db, Drink, db
-from .auth.auth import AuthError, requires_auth
+from database.models import db_drop_and_create_all, setup_db, db, Actor, Movie
+from auth.auth import AuthError, requires_auth
 import sys
 
 app = Flask(__name__)
@@ -47,13 +47,14 @@ db_drop_and_create_all()
 '''
 
 
-@app.route('/drinks', methods=['GET'])
+@app.route('/actors', methods=['GET'])
+@requires_auth('get:actors')
 @cross_origin()
-def get_drinks():
-    drinks = Drink.query.all()
-    short_drinks = [drink.short() for drink in drinks]
+def get_actors():
+    actors = Actor.query.all()
+    formatted_actors = [actor.format() for actor in actors]
 
-    return jsonify({"success": True, "drinks": short_drinks})
+    return jsonify({"success": True, "actors": formatted_actors})
 
 
 '''
@@ -65,18 +66,18 @@ def get_drinks():
 '''
 
 
-@app.route('/drinks-detail', methods=['GET'])
-@requires_auth('get:drinks-detail')
+@app.route('/movies', methods=['GET'])
+@requires_auth('get:movies')
 @cross_origin()
-def get_drinks_detail(payload):
-    drinks = Drink.query.all()
-    long_drinks = [drink.long() for drink in drinks]
+def get_movies(payload):
+    movies = Movie.query.all()
+    formatted_movies = [movie.format() for movie in movies]
 
-    return jsonify({"success": True, "drinks": long_drinks})
+    return jsonify({"success": True, "movies": formatted_movies})
 
 
 '''
-    POST /drinks
+    POST /actors
         it should create a new row in the drinks table
         it should require the 'post:drinks' permission
         it should contain the drink.long() data representation
@@ -85,22 +86,23 @@ def get_drinks_detail(payload):
 '''
 
 
-@app.route('/drinks', methods=['POST'])
-@requires_auth('post:drinks')
+@app.route('/actors', methods=['POST'])
+@requires_auth('post:actors')
 @cross_origin()
-def post_drinks(payload):
+def post_actors(payload):
 
     error = False
     try:
         # get new values
         request_json = request.get_json()
-        title = request_json['title']
-        recipe = json.dumps(request_json['recipe'])
-
+        name = request_json['name']
+        age = request_json['age']
+        gender = request_json['gender']
+        
         # create a new row in the drinks table
-        drink = Drink(title=title, recipe=recipe)
-        drink.insert()
-        long_drink = drink.long()
+        actor = Actor(name=name, age=age, gender=gender)
+        actor.insert()
+        formatted_actor = actor.format()
     except:
         error = True
         db.session.rollback()
@@ -111,11 +113,50 @@ def post_drinks(payload):
         abort(400)
     else:
         # on successful db insert
-        return jsonify({"success": True, "drinks": long_drink})
+        return jsonify({"success": True, "actor": formatted_actor})
 
 
 '''
-    PATCH /drinks/<id>
+    POST /movies
+        it should create a new row in the drinks table
+        it should require the 'post:drinks' permission
+        it should contain the drink.long() data representation
+    returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the newly created drink
+        or appropriate status code indicating reason for failure
+'''
+
+
+@app.route('/movies', methods=['POST'])
+@requires_auth('post:movies')
+@cross_origin()
+def post_movies(payload):
+
+    error = False
+    try:
+        # get new values
+        request_json = request.get_json()
+        title = request_json['title']
+        release_date = request_json['release_date']
+        
+        # create a new row in the drinks table
+        movie = Actor(title=title, release_date=release_date)
+        movie.insert()
+        formatted_movie = movie.format()
+    except:
+        error = True
+        db.session.rollback()
+        print(sys.exc_info())
+    finally:
+        db.session.close()
+    if error:
+        abort(400)
+    else:
+        # on successful db insert
+        return jsonify({"success": True, "movie": formatted_movie})
+
+
+'''
+    PATCH /actors/<id>
         where <id> is the existing model id
         it should respond with a 404 error if <id> is not found
         it should update the corresponding row for <id>
@@ -126,44 +167,96 @@ def post_drinks(payload):
 '''
 
 
-@app.route('/drinks/<id>', methods=['PATCH'])
-@requires_auth('patch:drinks')
+@app.route('/actors/<id>', methods=['PATCH'])
+@requires_auth('patch:actors')
 @cross_origin()
 def patch_drinks(payload, id):
     success = False
     try:
-        # get a drink object corresponding to given id
-        drink = Drink.query.get(id)
+        # get a actor object corresponding to given id
+        actor = Actor.query.get(id)
 
         # get new values
         request_json = request.get_json()
-        if 'title' in request_json:
+        if 'name' in request_json:
             # update field values
-            title = request_json['title']
-            drink.title = title
+            name = request_json['name']
+            actor.name = name
 
-        if 'recipe' in request_json:
+        if 'age' in request_json:
             # update field values
-            recipe = json.dumps(request_json['recipe'])
-            drink.recipe = recipe
+            age = request_json['age']
+            actor.age = age
 
-        drink.update()
+        if 'gender' in request_json:
+            # update field values
+            gender = request_json['gender']
+            actor.gender = gender
+
+        actor.update()
 
         # mark success
         success = True
-        long_drink = drink.long()
+        formatted_actor = actor.format()
     except:
         db.session.rollback()
         abort(404)  # it should respond with a 404 error if <id> is not found
     finally:
         db.session.close()
 
-    return jsonify({"success": success, "drinks": [long_drink]})
+    return jsonify({"success": success, "actor": formatted_actor})
+
+
+'''
+    PATCH /movies/<id>
+        where <id> is the existing model id
+        it should respond with a 404 error if <id> is not found
+        it should update the corresponding row for <id>
+        it should require the 'patch:drinks' permission
+        it should contain the drink.long() data representation
+    returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the updated drink
+        or appropriate status code indicating reason for failure
+'''
+
+
+@app.route('/movies/<id>', methods=['PATCH'])
+@requires_auth('patch:actors')
+@cross_origin()
+def patch_movies(payload, id):
+    success = False
+    try:
+        # get a movie object corresponding to given id
+        movie = Movie.query.get(id)
+
+        # get new values
+        request_json = request.get_json()
+        if 'title' in request_json:
+            # update field values
+            title = request_json['title']
+            movie.title = title
+
+        if 'release_deta' in request_json:
+            # update field values
+            release_deta = request_json['release_deta']
+            movie.release_deta = release_deta
+
+        movie.update()
+
+        # mark success
+        success = True
+        formatted_movie = movie.format()
+    except:
+        db.session.rollback()
+        abort(404)  # it should respond with a 404 error if <id> is not found
+    finally:
+        db.session.close()
+
+    return jsonify({"success": success, "actor": formatted_movie})
 
 
 '''
 @TODO implement endpoint
-    DELETE /drinks/<id>
+    DELETE /actors/<id>
         where <id> is the existing model id
         it should respond with a 404 error if <id> is not found
         it should delete the corresponding row for <id>
@@ -173,14 +266,44 @@ def patch_drinks(payload, id):
 '''
 
 
-@app.route('/drinks/<id>', methods=['DELETE'])
-@requires_auth('delete:drinks')
+@app.route('/actors/<id>', methods=['DELETE'])
+@requires_auth('delete:actors')
 @cross_origin()
 def delete_drinks(payload, id):
     success = False
     try:
-        drink = Drink.query.get(id)
+        drink = Actor.query.get(id)
         drink.delete()
+        success = True
+    except:
+        db.session.rollback()
+        abort(404)  # it should respond with a 404 error if <id> is not found
+    finally:
+        db.session.close()
+
+    return jsonify({"success": success, "delete": id})
+
+
+'''
+@TODO implement endpoint
+    DELETE /movies/<id>
+        where <id> is the existing model id
+        it should respond with a 404 error if <id> is not found
+        it should delete the corresponding row for <id>
+        it should require the 'delete:drinks' permission
+    returns status code 200 and json {"success": True, "delete": id} where id is the id of the deleted record
+        or appropriate status code indicating reason for failure
+'''
+
+
+@app.route('/movies/<id>', methods=['DELETE'])
+@requires_auth('delete:movies')
+@cross_origin()
+def delete_movies(payload, id):
+    success = False
+    try:
+        movie = Movie.query.get(id)
+        movie.delete()
         success = True
     except:
         db.session.rollback()
