@@ -10,9 +10,9 @@ from database.models import (
     Actor
 )
 from agency_api import (
-    app, 
-    format_date, 
-    format_age, 
+    app,
+    format_date,
+    format_age,
     format_gender
 )
 import os
@@ -90,7 +90,8 @@ class ExecutiveProducerTestCase(unittest.TestCase):
             'age': 30,
             'gender': 'F'
         }
-        res = self.client().post('/actors', headers=self.headers, json=req_data)
+        res = self.client().post('/actors',
+                                 headers=self.headers, json=req_data)
         self.assertEqual(res.status_code, 401)
 
     def test_error_post_movies(self):
@@ -99,7 +100,8 @@ class ExecutiveProducerTestCase(unittest.TestCase):
             'title': 'Movie1',
             'release_date': '2020-12-12'
         }
-        res = self.client().post('/movies', headers=self.headers, json=req_data)
+        res = self.client().post('/movies',
+                                 headers=self.headers, json=req_data)
         self.assertEqual(res.status_code, 401)
 
     '''

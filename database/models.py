@@ -1,8 +1,8 @@
 import os
 from sqlalchemy import (
-    Column, 
-    String, 
-    Integer, 
+    Column,
+    String,
+    Integer,
     Date
 )
 from flask_sqlalchemy import SQLAlchemy
@@ -35,7 +35,8 @@ def setup_db(app, database_filename=None):
 db_drop_and_create_all()
     drops the database tables and starts fresh
     can be used to initialize a clean database
-    !!NOTE you can change the database_filename variable to have multiple verisons of a database
+    !!NOTE you can change the database_filename variable
+    to have multiple verisons of a database
 '''
 
 
@@ -43,17 +44,20 @@ def db_drop_and_create_all():
     db.drop_all()
     db.create_all()
 
+
 '''
 Helper
 implement common helper methods for model
 '''
+
+
 class Helper():
     '''
     format()
         json representation of the model
         (must be implemented by sub class)
     '''
-    
+
     def format(self):
         return {}
 

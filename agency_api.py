@@ -1,26 +1,26 @@
 import os
 from flask import (
-    Flask, 
-    request, 
-    jsonify, 
-    abort, 
+    Flask,
+    request,
+    jsonify,
+    abort,
     make_response
 )
 from sqlalchemy import exc
 import json
 from flask_cors import (
-    CORS, 
+    CORS,
     cross_origin
 )
 from database.models import (
-    db_drop_and_create_all, 
-    setup_db, 
-    db, 
-    Actor, 
+    db_drop_and_create_all,
+    setup_db,
+    db,
+    Actor,
     Movie
 )
 from auth.auth import (
-    AuthError, 
+    AuthError,
     requires_auth
 )
 import sys
@@ -30,7 +30,7 @@ import traceback
 app = Flask(__name__)
 setup_db(app)
 GENDER_SET = set(['M', 'F'])  # define gender values
-MODELS_PER_PAGE = 10 # for paging result
+MODELS_PER_PAGE = 10  # for paging result
 
 '''
     Formatting & Validatinga Date
@@ -42,7 +42,8 @@ def format_date(date_str, date_format='%Y-%m-%d'):
         formatted_date = datetime.datetime.strptime(date_str, date_format)
     except Exception:
         print(sys.exc_info())
-        abort(status=400, description='invalid date format. it must be %Y-%m-%d')
+        abort(status=400,
+              description='invalid date format. it must be %Y-%m-%d')
 
     return formatted_date
 
@@ -104,6 +105,8 @@ def after_request(response):
     GET /
         return a welcome message
 '''
+
+
 @app.route('/', methods=['GET'])
 def index():
     return jsonify({
@@ -221,7 +224,8 @@ def post_movies(payload):
     request_json = request.get_json()
     title = request_json['title'] if 'title' in request_json \
         else abort(400, description='title is empty')
-    release_date = format_date(request_json['release_date']) if 'release_date' in request_json \
+    release_date = format_date(request_json['release_date']) \
+        if 'release_date' in request_json \
         else abort(400, description='release_date is empty')
     try:
 

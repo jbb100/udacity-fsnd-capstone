@@ -10,9 +10,9 @@ from database.models import (
     Actor
 )
 from agency_api import (
-    app, 
-    format_date, 
-    format_age, 
+    app,
+    format_date,
+    format_age,
     format_gender
 )
 import os
@@ -90,7 +90,8 @@ class ExecutiveProducerTestCase(unittest.TestCase):
             'age': 30,
             'gender': 'F'
         }
-        res = self.client().post('/actors', headers=self.headers, json=req_data)
+        res = self.client().post('/actors',
+                                 headers=self.headers, json=req_data)
         data = res.get_json()
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['actor']['name'], req_data['name'])
@@ -139,7 +140,8 @@ class ExecutiveProducerTestCase(unittest.TestCase):
             'title': 'Movie1',
             'release_date': '2020-12-12'
         }
-        res = self.client().post('/movies', headers=self.headers, json=req_data)
+        res = self.client().post('/movies',
+                                 headers=self.headers, json=req_data)
         data = res.get_json()
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['movie']['title'], req_data['title'])
@@ -152,7 +154,8 @@ class ExecutiveProducerTestCase(unittest.TestCase):
             'title': 'Movie12',
             'release_date': '20201212'
         }
-        res = self.client().post('/movies', headers=self.headers, json=req_data)
+        res = self.client().post('/movies',
+                                 headers=self.headers, json=req_data)
         self.assertEqual(res.status_code, 400)
         self.assertEqual(res.get_json()['message'],
                          'invalid date format. it must be %Y-%m-%d')
