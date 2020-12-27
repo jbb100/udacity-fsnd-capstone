@@ -9,12 +9,12 @@ Permission | Casting Assistant | Casting Director | Executive Producer
 ------------ | ------------ | ------------ | ------------
 get:actors | O | O | O
 get:movies | O | O | O
-post:actors |  | O | O
-post:movies |  |  | O
-patch:actors |  | O | O
-patch:movies |  | O | O
-delete:actors |  |  | O
-delete:movies |  | O | O
+post:actors | - | O | O
+post:movies | - | - | O
+patch:actors | - | O | O
+patch:movies | - | O | O
+delete:actors | - | O | O
+delete:movies | - | - | O
 
 
 
