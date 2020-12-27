@@ -1,1 +1,1 @@
-web: gunicorn agency_api:app
+web: source setup.sh && gunicorn agency_api:app
