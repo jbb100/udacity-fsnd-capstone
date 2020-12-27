@@ -50,7 +50,7 @@ sh server.sh
 ```
 Heroku URL
 ```
-https://udacity-fsnd-capstone-jbb.herokuapp.com
+https://udacity-fsnd-capstone-jbb.herokuapp.com/
 ```
 ## Endpoints
 ### Actor
