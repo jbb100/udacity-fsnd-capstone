@@ -48,51 +48,16 @@ GET '/actors'
 - Request Arguments: None
 - Returns: an Actor list
 ```javascript
-{'1' : "Science",
-'2' : "Art",
-'3' : "Geography",
-'4' : "History",
-'5' : "Entertainment",
-'6' : "Sports"}
-```
-
-GET '/questions'
-- Fetches a dictionary of questions
-- Request Arguments
-
-Name | Type | Mandatory | Description
------------- | ------------ | ------------ | ------------
-page | INT | NO | query string (Default: 1)
-
-- Returns: An object with three keys, questions, total_questions, and categories.
-```javascript
 {
-  'success': True,
-  'questions': [
-     {
-      'id': 5, 
-      'question': "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?", 
-      'answer': 'Maya Angelou', 
-      'category': 4, 
-      'difficulty': 2
-    }, 
-    {
-      'id': 9, 
-      'question': "What boxer's original name is Cassius Clay?", 
-      'answer': 'Muhammad Ali', 
-      'category': 4, 
-      'difficulty': 1
-     }
-   ], 
-   'total_questions': 19, 
-     'categories': {
-       '1': 'Science', 
-       '2': 'Art', 
-       '3': 'Geography', 
-       '4': 'History', 
-       '5': 'Entertainment', 
-       '6': 'Sports'
-      }
+    "actors": [
+        {
+            "age": 30,
+            "gender": "F",
+            "id": 1,
+            "name": "Actor1"
+        }
+    ],
+    "success": true
 }
 ```
 
@@ -107,27 +72,56 @@ name | STRING | YES | name of an actor
 age | INT | YES | age of an actor
 gender | STRING | YES | gender of an actor
 
+- Returns: An object with two keys, success and actor.
 ```javascript
 {
-    "name": "Actor1",
-    "age": 30,
-    "gender": "F"
+    "actor": {
+        "age": 30,
+        "gender": "F",
+        "id": 1,
+        "name": "Actor1"
+    },
+    "success": true
 }
 ```
 
-DELETE '/questions/<question_id>'
-- Delete a question by id
+PATCH '/actors'
+- Modify actor's information
+- Request Arguments
+- Content-Type: application/json
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+name | STRING | NO | name of an actor
+age | INT | NO | age of an actor
+gender | STRING | NO | gender of an actor
+
+- Returns: An object with two keys, success and actor.
+```javascript
+{
+    "actor": {
+        "age": 40,
+        "gender": "M",
+        "id": 1,
+        "name": "Actor11"
+    },
+    "success": true
+}
+```
+
+DELETE '/actors/<id>'
+- Delete an actor by id
 - Request Arguments
 
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
-question_id | INT | YES | a question id to delete (path variable)
+id | INT | YES | a actor id to delete (path variable)
 
 - Returns: 
 ```javascript
 {
-  'question_id': 1, 
-  'success': True
+    "delete": "1",
+    "success": true
 }
 ```
 
