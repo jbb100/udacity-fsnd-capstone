@@ -1,5 +1,5 @@
 # Full Stack Capstone API
-## Motivation
+## Introduction & Motivation
 This project is the capstone project of "Full Stack Web Developer Nanodegree Program" at Udacity.
 It models Casting Agency with three roles: Casting Assistant, Casting Director, and Executive Producer.
 Each role has different permissions for Movie and Action model.
