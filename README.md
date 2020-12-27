@@ -1,5 +1,5 @@
 # Full Stack Capstone API
-## Motivation
+## Introduction & Motivation
 This project is the capstone project of "Full Stack Web Developer Nanodegree Program" at Udacity.
 It models Casting Agency with three roles: Casting Assistant, Casting Director, and Executive Producer.
 Each role has different permissions for Movie and Action model.
@@ -50,7 +50,7 @@ sh server.sh
 ```
 Heroku URL
 ```
-https://udacity-fsnd-capstone-jbb.herokuapp.com
+https://udacity-fsnd-capstone-jbb.herokuapp.com/
 ```
 ## Endpoints
 ### Actor
@@ -249,13 +249,13 @@ Here is the error JSON payload:
  * An unknown error occured while processing the request.
 
 ## Testing
-To run the tests, run
+To run the tests
 ```
 source setup.sh
 sh test.sh
 ```
 
-To run tests for each
+To run tests for each role
 ```
 # for linux / on windows, you need to use "set"
 export PYTHONPATH=$PWD
