@@ -29,7 +29,10 @@ To run the server, execute:
 ```bash
 sh server.sh
 ```
-
+Heroku URL
+```
+https://udacity-fsnd-capstone-jbb.herokuapp.com
+```
 ## Endpoints
 ### Actor
 GET '/actors'
