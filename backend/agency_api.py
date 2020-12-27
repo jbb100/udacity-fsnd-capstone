@@ -1,23 +1,70 @@
 import os
-from flask import Flask, request, jsonify, abort
+from flask import Flask, request, jsonify, abort, make_response
 from sqlalchemy import exc
 import json
 from flask_cors import CORS, cross_origin
 from database.models import db_drop_and_create_all, setup_db, db, Actor, Movie
 from auth.auth import AuthError, requires_auth
 import sys
+import datetime
+import traceback
 
 app = Flask(__name__)
 setup_db(app)
+GENDER_SET = set(['M', 'F'])  # define gender values
 
 '''
-Set up CORS. Allow '*' for origins.
-Delete the sample route after completing the TODOs
+    Formatting & Validatinga Date
+'''
+
+
+def format_date(date_str, date_format='%Y-%m-%d'):
+    try:
+        formatted_date = datetime.datetime.strptime(date_str, date_format)
+    except:
+        abort(status=400, description='invalid date format. it must be %Y-%m-%d')
+
+    return formatted_date
+
+
+'''
+    Formatting & Validating Age
+'''
+
+
+def format_age(age):
+    try:
+        age = int(age)
+    except:
+        abort(status=400, description='age must be Integer')
+
+    if age < 0:
+        abort(status=400, description='age must be Pos. Integer (0 > age)')
+
+    return age
+
+
+'''
+    Formatting & Validating Gender
+'''
+
+
+def format_gender(gender):
+    gender = gender.upper()
+    if gender not in GENDER_SET:
+        abort(status=400, description='gender must be "M" or "F"')
+
+    return gender
+
+
+'''
+    Set up CORS. Allow '*' for origins.
+    Delete the sample route after completing the TODOs
 '''
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
 '''
-Use the after_request decorator to set Access-Control-Allow
+    Use the after_request decorator to set Access-Control-Allow
 '''
 # CORS Headers
 
@@ -32,8 +79,8 @@ def after_request(response):
 
 
 '''
-!! NOTE THIS WILL DROP ALL RECORDS AND START YOUR DB FROM SCRATCH
-!! NOTE THIS MUST BE UNCOMMENTED ON FIRST RUN
+    !! NOTE THIS WILL DROP ALL RECORDS AND START YOUR DB FROM SCRATCH
+    !! NOTE THIS MUST BE UNCOMMENTED ON FIRST RUN
 '''
 db_drop_and_create_all()
 
@@ -82,13 +129,23 @@ def get_movies(payload):
 def post_actors(payload):
 
     error = False
-    try:
-        # get new values
-        request_json = request.get_json()
-        name = request_json['name']
-        age = request_json['age']
-        gender = request_json['gender']
 
+    # get new values
+    request_json = request.get_json()
+    name = request_json['name'] if 'name' in request_json \
+        else abort(400, 'name is empty')
+    age = request_json['age'] if 'age' in request_json \
+        else abort(400, 'age is empty')
+    gender = request_json['gender'] if 'gender' in request_json \
+        else abort(400, 'gender is emtpy')
+
+    # validate age value
+    age = format_age(age)
+
+    # validate gender value (M,F)
+    gender = format_gender(gender)
+
+    try:
         # create a new row in the drinks table
         actor = Actor(name=name, age=age, gender=gender)
         actor.insert()
@@ -118,14 +175,16 @@ def post_actors(payload):
 def post_movies(payload):
 
     error = False
+    # get new values
+    request_json = request.get_json()
+    title = request_json['title'] if 'title' in request_json \
+        else abort(400, description='title is empty')
+    release_date = format_date(request_json['release_date']) if 'release_date' in request_json \
+        else abort(400, description='release_date is empty')
     try:
-        # get new values
-        request_json = request.get_json()
-        title = request_json['title']
-        release_date = request_json['release_date']
 
         # create a new row in the drinks table
-        movie = Actor(title=title, release_date=release_date)
+        movie = Movie(title=title, release_date=release_date)
         movie.insert()
         formatted_movie = movie.format()
     except:
@@ -135,7 +194,7 @@ def post_movies(payload):
     finally:
         db.session.close()
     if error:
-        abort(400)
+        abort(status=400, description='bad request')
     else:
         # on successful db insert
         return jsonify({"success": True, "movie": formatted_movie})
@@ -150,37 +209,48 @@ def post_movies(payload):
 @app.route('/actors/<id>', methods=['PATCH'])
 @requires_auth('patch:actors')
 @cross_origin()
-def patch_drinks(payload, id):
+def patch_actors(payload, id):
     success = False
+
+    # get a actor object corresponding to given id
     try:
-        # get a actor object corresponding to given id
         actor = Actor.query.get(id)
+    except:
+        abort(404)  # it should respond with a 404 error if <id> is not found
 
-        # get new values
-        request_json = request.get_json()
-        if 'name' in request_json:
-            # update field values
-            name = request_json['name']
-            actor.name = name
+    # get new values
+    request_json = request.get_json()
+    if 'name' in request_json:
+        # update field values
+        name = request_json['name']
+        actor.name = name
 
-        if 'age' in request_json:
-            # update field values
-            age = request_json['age']
-            actor.age = age
+    if 'age' in request_json:
+        # validate age value
+        age = request_json['age']
+        age = format_age(age)
 
-        if 'gender' in request_json:
-            # update field values
-            gender = request_json['gender']
-            actor.gender = gender
+        # update field values
+        actor.age = age
 
+    if 'gender' in request_json:
+        # validate gender value (M,F)
+        gender = request_json['gender']
+        gender = format_gender(gender)
+
+        # update field values
+        actor.gender = gender
+
+    try:
         actor.update()
 
         # mark success
         success = True
         formatted_actor = actor.format()
     except:
+        traceback.print_exc()
         db.session.rollback()
-        abort(404)  # it should respond with a 404 error if <id> is not found
+        abort(500)
     finally:
         db.session.close()
 
@@ -194,26 +264,30 @@ def patch_drinks(payload, id):
 
 
 @app.route('/movies/<id>', methods=['PATCH'])
-@requires_auth('patch:actors')
+@requires_auth('patch:movies')
 @cross_origin()
 def patch_movies(payload, id):
     success = False
+
     try:
         # get a movie object corresponding to given id
         movie = Movie.query.get(id)
+    except:
+        abort(404)  # it should respond with a 404 error if <id> is not found
 
-        # get new values
-        request_json = request.get_json()
-        if 'title' in request_json:
-            # update field values
-            title = request_json['title']
-            movie.title = title
+    # get new values
+    request_json = request.get_json()
+    if 'title' in request_json:
+        # update field values
+        title = request_json['title']
+        movie.title = title
 
-        if 'release_deta' in request_json:
-            # update field values
-            release_deta = request_json['release_deta']
-            movie.release_deta = release_deta
+    if 'release_date' in request_json:
+        # update field values
+        release_date = format_date(request_json['release_date'])
+        movie.release_date = release_date
 
+    try:
         movie.update()
 
         # mark success
@@ -225,7 +299,7 @@ def patch_movies(payload, id):
     finally:
         db.session.close()
 
-    return jsonify({"success": success, "actor": formatted_movie})
+    return jsonify({"success": success, "movie": formatted_movie})
 
 
 '''
@@ -237,7 +311,7 @@ def patch_movies(payload, id):
 @app.route('/actors/<id>', methods=['DELETE'])
 @requires_auth('delete:actors')
 @cross_origin()
-def delete_drinks(payload, id):
+def delete_actors(payload, id):
     success = False
     try:
         drink = Actor.query.get(id)
@@ -304,7 +378,7 @@ def bad_request(error):
     return jsonify({
         "success": False,
         "error": 400,
-        "message": "bad request"
+        "message": error.description
     }), 400
 
 
