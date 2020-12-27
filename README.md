@@ -6,7 +6,7 @@ Each role has different permissions for Movie and Action model.
 
 ## Roles & Permissions
 Permission | Casting Assistant | Casting Director | Executive Producer
------------- | ------------ | ------------ | ------------
+:----------: | :----------: | :----------: | :----------:
 get:actors | O | O | O
 get:movies | O | O | O
 post:actors | - | O | O
