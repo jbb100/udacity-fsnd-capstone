@@ -255,7 +255,7 @@ source setup.sh
 sh test.sh
 ```
 
-To run tests for each
+To run tests for each role
 ```
 # for linux / on windows, you need to use "set"
 export PYTHONPATH=$PWD
