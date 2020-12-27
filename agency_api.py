@@ -265,8 +265,6 @@ def patch_actors(payload, id):
         print(sys.exc_info())
         abort(404)  # it should respond with a 404 error if <id> is not found
 
-    print('columns = ', actor.__table__.columns)
-
     # get new values
     request_json = request.get_json()
     if 'name' in request_json:
