@@ -13,8 +13,9 @@ setup_db(app)
 
 
 def setup_db(app, database_filename="database.db"):
-    database_path = "sqlite:///{}".format(
-    os.path.join(project_dir, database_filename))
+    # database_path = "sqlite:///{}".format(
+    # os.path.join(project_dir, database_filename))
+    database_path = "postgres://dmtehblvjkjbci:c1b504ed559d767426786061f2106a551412621f5c741de20b8b6fbb4e0f5625@ec2-54-204-96-190.compute-1.amazonaws.com:5432/da7o5kkukmk89j"
     app.config["SQLALCHEMY_DATABASE_URI"] = database_path
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
