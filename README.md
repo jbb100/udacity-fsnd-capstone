@@ -56,7 +56,12 @@ https://udacity-fsnd-capstone-jbb.herokuapp.com
 ### Actor
 GET '/actors'
 - Get an Actor list
-- Request Arguments: None
+- Request Arguments
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+page | INT | YES | a page number (query string)
+
 - Returns: an Actor list
 ```javascript
 {
@@ -139,7 +144,12 @@ id | INT | YES | a actor id to delete (path variable)
 ### Movie
 GET '/movies'
 - Get an Movie list
-- Request Arguments: None
+- Request Arguments
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+page | INT | YES | a page number (query string)
+
 - Returns: an Movie list
 ```javascript
 {
