@@ -14,18 +14,15 @@ We recommend working within a virtual environment whenever using Python for proj
 
 #### PIP Dependencies
 
-Once you have your virtual environment setup and running, install dependencies by naviging to the `/backend` directory and running:
+Once you have your virtual environment setup and running, install dependencies by naviging to the `/` directory and running:
 
 ```bash
-cd backend
 pip install -r requirements.txt
 ```
 
 This will install all of the required packages we selected within the `requirements.txt` file.
 
 ## Running the server
-
-From within the `backend` directory first ensure you are working using your created virtual environment.
 
 To run the server, execute:
 
@@ -222,7 +219,6 @@ Here is the error JSON payload:
 ## Testing
 To run the tests, run
 ```
-cd backend
 sh test.sh
 ```
 
@@ -236,6 +232,6 @@ python test/test_executive_producer.py
 
 get access tokens for each role
 ```
-cd backend/test
+cd test
 cat token.yml
 ```
