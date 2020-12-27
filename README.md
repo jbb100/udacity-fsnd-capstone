@@ -16,8 +16,6 @@ patch:movies | - | O | O
 delete:actors | - | O | O
 delete:movies | - | - | O
 
-
-
 ## Getting Started
 
 ### Installing Dependencies
@@ -52,6 +50,21 @@ Heroku URL
 ```
 https://udacity-fsnd-capstone-jbb.herokuapp.com/
 ```
+
+## Authentication
+### HTTP Header
+```
+"Authorization": "Bearer <RBAC JWT Token>"
+```
+
+### RBAC JWT Tokens
+RBAC JWT Tokens are at setup.sh
+Role | ENV_NAME
+:----------: | :----------: 
+Casting Assistant | ASSISTANT
+Casting Director | DIRECTOR
+Executive Producer | PRODUCER
+
 ## Endpoints
 ### Actor
 GET '/actors'
