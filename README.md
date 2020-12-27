@@ -249,7 +249,7 @@ Here is the error JSON payload:
  * An unknown error occured while processing the request.
 
 ## Testing
-To run the tests, run
+To run the tests
 ```
 source setup.sh
 sh test.sh
