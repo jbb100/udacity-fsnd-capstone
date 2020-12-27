@@ -241,3 +241,9 @@ python test/test_casting_assistant.py
 python test/test_casting_director.py
 python test/test_executive_producer.py
 ```
+
+get access tokens for each role
+```
+cd backend/test
+cat token.yml
+```
