@@ -55,8 +55,8 @@ GET '/actors'
 
 POST '/actors'
 - Add an actor
-- Request Arguments
 - Content-Type: application/json
+- Request Arguments
 
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
@@ -80,7 +80,6 @@ gender | STRING | YES | gender of an actor
 PATCH '/actors'
 - Modify actor's information
 - Request Arguments
-- Content-Type: application/json
 
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
@@ -136,8 +135,8 @@ GET '/movies'
 
 POST '/movies'
 - Add an movie
-- Request Arguments
 - Content-Type: application/json
+- Request Arguments
 
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
@@ -157,8 +156,8 @@ release_date | STRING | YES | release date of an movie (date string format: %Y-%
 
 PATCH '/movies'
 - Modify movie's information
-- Request Arguments
 - Content-Type: application/json
+- Request Arguments
 
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
