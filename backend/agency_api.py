@@ -78,12 +78,6 @@ def after_request(response):
     return response
 
 
-'''
-    !! NOTE THIS WILL DROP ALL RECORDS AND START YOUR DB FROM SCRATCH
-    !! NOTE THIS MUST BE UNCOMMENTED ON FIRST RUN
-'''
-db_drop_and_create_all()
-
 # ROUTES
 '''
     GET /actors
