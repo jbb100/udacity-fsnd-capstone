@@ -126,15 +126,89 @@ id | INT | YES | a actor id to delete (path variable)
 ```
 
 ### Movie
+GET '/movies'
+- Get an Movie list
+- Request Arguments: None
+- Returns: an Movie list
+```javascript
+{
+    "movies": [
+        {
+            "title": "Movie1",
+            "release_date": "2020-12-12"
+        }
+    ],
+    "success": true
+}
+```
+
+POST '/movies'
+- Add an movie
+- Request Arguments
+- Content-Type: application/json
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+title | STRING | YES | title of an movie
+release_date | STRING | YES | release date of an movie (date string format: %Y-%m-%d)
+
+- Returns: An object with two keys, success and movie.
+```javascript
+{
+    "movie": {
+        "title": "Movie1",
+        "release_date": "2020-12-12"
+    },
+    "success": true
+}
+```
+
+PATCH '/movies'
+- Modify movie's information
+- Request Arguments
+- Content-Type: application/json
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+title | STRING | NO | title of an movie
+release_date | STRING | NO | release date of an movie (date string format: %Y-%m-%d)
+
+- Returns: An object with two keys, success and movie.
+```javascript
+{
+    "movie": {
+        "title": "Movie11",
+        "release_date": "2020-09-14"
+    },
+    "success": true
+}
+```
+
+DELETE '/movies/<id>'
+- Delete an movie by id
+- Request Arguments
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+id | INT | YES | a movie id to delete (path variable)
+
+- Returns: 
+```javascript
+{
+    "delete": "1",
+    "success": true
+}
+```
 
 ## Error Codes
 Errors consist of three parts: a success flag, an error code and a message.
+"message" can be different with each case.
 Here is the error JSON payload:
 ```javascript
 {
-  'success': False,
-  'error': 400,
-  'message':"bad request"
+  "success": False,
+  "error": 400,
+  "message": "bad request"
 }
 ```
 
@@ -156,8 +230,14 @@ Here is the error JSON payload:
 ## Testing
 To run the tests, run
 ```
-dropdb trivia_test
-createdb trivia_test
-psql trivia_test < trivia.psql
-python test_flaskr.py
+cd backend
+sh test.sh
+```
+
+test.sh
+```
+export PYTHONPATH=$PWD
+python test/test_casting_assistant.py
+python test/test_casting_director.py
+python test/test_executive_producer.py
 ```
