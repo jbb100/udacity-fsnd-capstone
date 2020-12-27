@@ -245,16 +245,13 @@ source setup.sh
 sh test.sh
 ```
 
-test.sh
+To run tests for each
 ```
+# for linux / on windows, you need to use "set"
 export PYTHONPATH=$PWD
+
 python test/test_casting_assistant.py
 python test/test_casting_director.py
 python test/test_executive_producer.py
 ```
 
-get access tokens for each role
-```
-cd test
-cat token.yml
-```
