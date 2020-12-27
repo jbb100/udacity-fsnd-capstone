@@ -134,7 +134,6 @@ class ExecutiveProducerTestCase(unittest.TestCase):
         res = self.client().post('/movies', headers=self.headers, json=req_data)
         self.assertEqual(res.status_code, 401)
 
-
     '''
         PATCH
     '''
@@ -239,6 +238,7 @@ class ExecutiveProducerTestCase(unittest.TestCase):
         res = self.client().delete(
             f'/movies/{target_id}', headers=self.headers)
         self.assertEqual(res.status_code, 401)
+
 
 # Make the tests conveniently executable
 if __name__ == "__main__":

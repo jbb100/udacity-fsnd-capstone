@@ -85,7 +85,6 @@ class ExecutiveProducerTestCase(unittest.TestCase):
         res = self.client().post('/actors', headers=self.headers, json=req_data)
         self.assertEqual(res.status_code, 401)
 
-
     def test_error_post_movies(self):
         # no permission
         req_data = {
@@ -139,7 +138,6 @@ class ExecutiveProducerTestCase(unittest.TestCase):
         res = self.client().delete(
             f'/movies/{target_id}', headers=self.headers)
         self.assertEqual(res.status_code, 401)
-
 
 
 # Make the tests conveniently executable
