@@ -59,7 +59,7 @@ https://udacity-fsnd-capstone-jbb.herokuapp.com/
 
 ### RBAC JWT Tokens
 RBAC JWT Tokens are at setup.sh
-Role | ENV_NAME
+Role | ENV_VARIABLE
 :----------: | :----------: 
 Casting Assistant | ASSISTANT
 Casting Director | DIRECTOR
