@@ -79,6 +79,7 @@ gender | STRING | YES | gender of an actor
 
 PATCH '/actors'
 - Modify actor's information
+- Content-Type: application/json
 - Request Arguments
 
 Name | Type | Mandatory | Description
