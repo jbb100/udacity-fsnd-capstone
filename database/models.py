@@ -1,5 +1,10 @@
 import os
-from sqlalchemy import Column, String, Integer, Date
+from sqlalchemy import (
+    Column, 
+    String, 
+    Integer, 
+    Date
+)
 from flask_sqlalchemy import SQLAlchemy
 import json
 
@@ -19,7 +24,7 @@ def setup_db(app, database_filename=None):
             os.path.join(project_dir, database_filename))
     else:
         # else use postgres
-        database_path = "postgres://dmtehblvjkjbci:c1b504ed559d767426786061f2106a551412621f5c741de20b8b6fbb4e0f5625@ec2-54-204-96-190.compute-1.amazonaws.com:5432/da7o5kkukmk89j"
+        database_path = os.environ.get('DATABASE_URI')
     app.config["SQLALCHEMY_DATABASE_URI"] = database_path
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
@@ -38,32 +43,19 @@ def db_drop_and_create_all():
     db.drop_all()
     db.create_all()
 
-
 '''
-Movies
-a persistent movie entity, extends the base SQLAlchemy Model
+BaseModel
+implement base model contains common helper methods for models
 '''
-
-
-class Movie(db.Model):
-    # Autoincrementing, unique primary key
-    id = Column(Integer().with_variant(Integer, "sqlite"), primary_key=True)
-    # String Title
-    title = Column(String(100), nullable=False)
-    # Date Release Date
-    release_date = Column(Date, nullable=False)
-
+class BaseModel(db.Model):
     '''
     format()
-        json representation of the Movies model
+        json representation of the model
+        (must be implemented by sub class)
     '''
-
+    
     def format(self):
-        return {
-            'id': self.id,
-            'title': self.title,
-            'release_date': self.release_date.strftime('%Y-%m-%d')
-        }
+        return {}
 
     '''
     insert()
@@ -110,12 +102,41 @@ class Movie(db.Model):
 
 
 '''
+Movies
+a persistent movie entity, extends the base SQLAlchemy Model
+'''
+
+
+class Movie(BaseModel):
+    __tablename__ = 'Movie'
+    # Autoincrementing, unique primary key
+    id = Column(Integer().with_variant(Integer, "sqlite"), primary_key=True)
+    # String Title
+    title = Column(String(100), nullable=False)
+    # Date Release Date
+    release_date = Column(Date, nullable=False)
+
+    '''
+    format()
+        json representation of the Movies model
+    '''
+
+    def format(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'release_date': self.release_date.strftime('%Y-%m-%d')
+        }
+
+
+'''
 Actors
 a persistent actor entity, extends the base SQLAlchemy Model
 '''
 
 
-class Actor(db.Model):
+class Actor(BaseModel):
+    __tablename__ = 'Actor'
     # Autoincrementing, unique primary key
     id = Column(Integer().with_variant(Integer, "sqlite"), primary_key=True)
     # String Title
@@ -137,46 +158,3 @@ class Actor(db.Model):
             'age': self.age,
             'gender': self.gender
         }
-
-    '''
-    insert()
-        inserts a new model into a database
-        the model must have a unique name
-        the model must have a unique id or null id
-        EXAMPLE
-            actor = Actor(name=req_name, age=req_age, gender=req_gender)
-            actor.insert()
-    '''
-
-    def insert(self):
-        db.session.add(self)
-        db.session.commit()
-
-    '''
-    delete()
-        deletes a new model into a database
-        the model must exist in the database
-        EXAMPLE
-            actor = Actor(name=req_name, age=req_age, gender=req_gender)
-            actor.delete()
-    '''
-
-    def delete(self):
-        db.session.delete(self)
-        db.session.commit()
-
-    '''
-    update()
-        updates a new model into a database
-        the model must exist in the database
-        EXAMPLE
-            actor = Actor.query.filter(Actor.id == id).one_or_none()
-            actor.title = 'Jung Woo-Sung'
-            actor.update()
-    '''
-
-    def update(self):
-        db.session.commit()
-
-    def __repr__(self):
-        return json.dumps(self.format())

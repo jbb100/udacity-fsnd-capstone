@@ -3,9 +3,19 @@ import os
 import unittest
 import json
 from flask_sqlalchemy import SQLAlchemy
-import yaml
-from database.models import setup_db, db_drop_and_create_all, Movie, Actor
-from agency_api import app, format_date, format_age, format_gender
+from database.models import (
+    setup_db,
+    db_drop_and_create_all,
+    Movie,
+    Actor
+)
+from agency_api import (
+    app, 
+    format_date, 
+    format_age, 
+    format_gender
+)
+import os
 
 
 class ExecutiveProducerTestCase(unittest.TestCase):
@@ -19,12 +29,10 @@ class ExecutiveProducerTestCase(unittest.TestCase):
         setup_db(self.app, database_filename="database_test.db")
 
         # set access token for this role
-        with open('test/token.yml') as f:
-            data = yaml.load(f, Loader=yaml.FullLoader)
-            self.headers = {
-                "Content-Type": "application/json",
-                "Authorization": f"Bearer {data['casting_assistant']}"
-            }
+        self.headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {os.environ.get('ASSISTANT')}"
+        }
 
         # binds the app to the current context
         with self.app.app_context():

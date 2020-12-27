@@ -1,6 +1,8 @@
 from flask_script import Manager
-from flask_migrate import Migrate, MigrateCommand
-
+from flask_migrate import (
+        Migrate, 
+        MigrateCommand
+)
 from agency_api import app
 from models import db
 

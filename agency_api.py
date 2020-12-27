@@ -1,10 +1,28 @@
 import os
-from flask import Flask, request, jsonify, abort, make_response
+from flask import (
+    Flask, 
+    request, 
+    jsonify, 
+    abort, 
+    make_response
+)
 from sqlalchemy import exc
 import json
-from flask_cors import CORS, cross_origin
-from database.models import db_drop_and_create_all, setup_db, db, Actor, Movie
-from auth.auth import AuthError, requires_auth
+from flask_cors import (
+    CORS, 
+    cross_origin
+)
+from database.models import (
+    db_drop_and_create_all, 
+    setup_db, 
+    db, 
+    Actor, 
+    Movie
+)
+from auth.auth import (
+    AuthError, 
+    requires_auth
+)
 import sys
 import datetime
 import traceback
@@ -12,6 +30,7 @@ import traceback
 app = Flask(__name__)
 setup_db(app)
 GENDER_SET = set(['M', 'F'])  # define gender values
+MODELS_PER_PAGE = 10 # for paging result
 
 '''
     Formatting & Validatinga Date
@@ -21,7 +40,8 @@ GENDER_SET = set(['M', 'F'])  # define gender values
 def format_date(date_str, date_format='%Y-%m-%d'):
     try:
         formatted_date = datetime.datetime.strptime(date_str, date_format)
-    except:
+    except Exception:
+        print(sys.exc_info())
         abort(status=400, description='invalid date format. it must be %Y-%m-%d')
 
     return formatted_date
@@ -35,7 +55,8 @@ def format_date(date_str, date_format='%Y-%m-%d'):
 def format_age(age):
     try:
         age = int(age)
-    except:
+    except Exception:
+        print(sys.exc_info())
         abort(status=400, description='age must be Integer')
 
     if age < 0:
@@ -80,6 +101,17 @@ def after_request(response):
 
 # ROUTES
 '''
+    GET /
+        return a welcome message
+'''
+@app.route('/', methods=['GET'])
+def index():
+    return jsonify({
+        'message': 'Welcome to My Agency API'
+    })
+
+
+'''
     GET /actors
         return actor lists
 '''
@@ -89,10 +121,18 @@ def after_request(response):
 @requires_auth('get:actors')
 @cross_origin()
 def get_actors(payload):
+    if request:
+        page = request.args.get('page', 1, type=int)
+    else:
+        page = 1
+    start = (page - 1) * MODELS_PER_PAGE
+    end = start + MODELS_PER_PAGE
+
     actors = Actor.query.all()
     formatted_actors = [actor.format() for actor in actors]
+    current_selected = formatted_actors[start:end]
 
-    return jsonify({"success": True, "actors": formatted_actors})
+    return jsonify({"success": True, "actors": current_selected})
 
 
 '''
@@ -105,10 +145,18 @@ def get_actors(payload):
 @requires_auth('get:movies')
 @cross_origin()
 def get_movies(payload):
+    if request:
+        page = request.args.get('page', 1, type=int)
+    else:
+        page = 1
+    start = (page - 1) * MODELS_PER_PAGE
+    end = start + MODELS_PER_PAGE
+
     movies = Movie.query.all()
     formatted_movies = [movie.format() for movie in movies]
+    current_selected = formatted_movies[start:end]
 
-    return jsonify({"success": True, "movies": formatted_movies})
+    return jsonify({"success": True, "movies": current_selected})
 
 
 '''
@@ -144,10 +192,10 @@ def post_actors(payload):
         actor = Actor(name=name, age=age, gender=gender)
         actor.insert()
         formatted_actor = actor.format()
-    except:
+    except Exception:
+        print(sys.exc_info())
         error = True
         db.session.rollback()
-        print(sys.exc_info())
     finally:
         db.session.close()
     if error:
@@ -181,10 +229,10 @@ def post_movies(payload):
         movie = Movie(title=title, release_date=release_date)
         movie.insert()
         formatted_movie = movie.format()
-    except:
+    except Exception:
+        print(sys.exc_info())
         error = True
         db.session.rollback()
-        print(sys.exc_info())
     finally:
         db.session.close()
     if error:
@@ -209,8 +257,11 @@ def patch_actors(payload, id):
     # get a actor object corresponding to given id
     try:
         actor = Actor.query.get(id)
-    except:
+    except Exception:
+        print(sys.exc_info())
         abort(404)  # it should respond with a 404 error if <id> is not found
+
+    print('columns = ', actor.__table__.columns)
 
     # get new values
     request_json = request.get_json()
@@ -241,8 +292,8 @@ def patch_actors(payload, id):
         # mark success
         success = True
         formatted_actor = actor.format()
-    except:
-        traceback.print_exc()
+    except Exception:
+        print(sys.exc_info())
         db.session.rollback()
         abort(500)
     finally:
@@ -266,7 +317,8 @@ def patch_movies(payload, id):
     try:
         # get a movie object corresponding to given id
         movie = Movie.query.get(id)
-    except:
+    except Exception:
+        print(sys.exc_info())
         abort(404)  # it should respond with a 404 error if <id> is not found
 
     # get new values
@@ -287,7 +339,8 @@ def patch_movies(payload, id):
         # mark success
         success = True
         formatted_movie = movie.format()
-    except:
+    except Exception:
+        print(sys.exc_info())
         db.session.rollback()
         abort(404)  # it should respond with a 404 error if <id> is not found
     finally:
@@ -311,7 +364,8 @@ def delete_actors(payload, id):
         drink = Actor.query.get(id)
         drink.delete()
         success = True
-    except:
+    except Exception:
+        print(sys.exc_info())
         db.session.rollback()
         abort(404)  # it should respond with a 404 error if <id> is not found
     finally:
@@ -335,7 +389,8 @@ def delete_movies(payload, id):
         movie = Movie.query.get(id)
         movie.delete()
         success = True
-    except:
+    except Exception:
+        print(sys.exc_info())
         db.session.rollback()
         abort(404)  # it should respond with a 404 error if <id> is not found
     finally:
