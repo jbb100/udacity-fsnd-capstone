@@ -44,10 +44,10 @@ def db_drop_and_create_all():
     db.create_all()
 
 '''
-BaseModel
-implement base model contains common helper methods for models
+Helper
+implement common helper methods for model
 '''
-class BaseModel(db.Model):
+class Helper():
     '''
     format()
         json representation of the model
@@ -107,7 +107,7 @@ a persistent movie entity, extends the base SQLAlchemy Model
 '''
 
 
-class Movie(BaseModel):
+class Movie(db.Model, Helper):
     __tablename__ = 'Movie'
     # Autoincrementing, unique primary key
     id = Column(Integer().with_variant(Integer, "sqlite"), primary_key=True)
@@ -135,7 +135,7 @@ a persistent actor entity, extends the base SQLAlchemy Model
 '''
 
 
-class Actor(BaseModel):
+class Actor(db.Model, Helper):
     __tablename__ = 'Actor'
     # Autoincrementing, unique primary key
     id = Column(Integer().with_variant(Integer, "sqlite"), primary_key=True)
