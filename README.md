@@ -43,10 +43,10 @@ sh server.sh
 
 ## Endpoints
 ### Actor
-GET '/categories'
-- Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
+GET '/actors'
+- Get an Actor list
 - Request Arguments: None
-- Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs. 
+- Returns: an Actor list
 ```javascript
 {'1' : "Science",
 '2' : "Art",
@@ -93,6 +93,25 @@ page | INT | NO | query string (Default: 1)
        '5': 'Entertainment', 
        '6': 'Sports'
       }
+}
+```
+
+POST '/actors'
+- Add an actor
+- Request Arguments
+- Content-Type: application/json
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+name | STRING | YES | name of an actor
+age | INT | YES | age of an actor
+gender | STRING | YES | gender of an actor
+
+```javascript
+{
+    "name": "Actor1",
+    "age": 30,
+    "gender": "F"
 }
 ```
 
