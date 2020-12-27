@@ -1,4 +1,22 @@
 # Full Stack Capstone API
+## Motivation
+This project is the capstone project of "Full Stack Web Developer Nanodegree Program" at Udacity.
+It models Casting Agency with three roles: Casting Assistant, Casting Director, and Executive Producer.
+Each role has different permissions for Movie and Action model.
+
+## Roles & Permissions
+Permission | Casting Assistant | Casting Director | Executive Producer
+------------ | ------------ | ------------ | ------------
+get:actors | O | O | O
+get:movies | O | O | O
+post:actors |  | O | O
+post:movies |  |  | O
+patch:actors |  | O | O
+patch:movies |  | O | O
+delete:actors |  |  | O
+delete:movies |  | O | O
+
+
 
 ## Getting Started
 
@@ -17,7 +35,7 @@ We recommend working within a virtual environment whenever using Python for proj
 Once you have your virtual environment setup and running, install dependencies by naviging to the `/` directory and running:
 
 ```bash
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
 This will install all of the required packages we selected within the `requirements.txt` file.
@@ -27,6 +45,7 @@ This will install all of the required packages we selected within the `requireme
 To run the server, execute:
 
 ```bash
+source setup.sh
 sh server.sh
 ```
 Heroku URL
@@ -222,6 +241,7 @@ Here is the error JSON payload:
 ## Testing
 To run the tests, run
 ```
+source setup.sh
 sh test.sh
 ```
 
